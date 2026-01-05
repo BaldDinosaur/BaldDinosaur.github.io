@@ -67,136 +67,68 @@ function healPokemon() {
 // Encounter wild Pokémon
 function encounterWildPokemon() {
   const wild = wildPokemon[Math.floor(Math.random() * wildPokemon.length)];
-  gameScreenEl.innerHTML = `A wild ${wild.name} appeared! (Battle coming soon)`;
-  const backBtn = document.createElement("button");
-  backBtn.textContent = "Run Back";
-  backBtn.onclick = showMainMenu;
-  choicesEl.appendChild(backBtn);
+  startBattle({ ...wild }); // Start the battle with a copy of wild Pokémon
+}
+
+// Battle system
+function startBattle(wild) {
+  gameScreenEl.innerHTML = `A wild ${wild.name} appeared!<br>`;
+  
+  let player = gameState.playerPokemon[0];
+  
+  function showBattleOptions() {
+    choicesEl.innerHTML = "";
+    player.moves.forEach((move, index) => {
+      const btn = document.createElement("button");
+      btn.textContent = `${move.name} (${move.damage} dmg)`;
+      btn.onclick = () => useMove(index);
+      choicesEl.appendChild(btn);
+    });
+    const runBtn = document.createElement("button");
+    runBtn.textContent = "Run";
+    runBtn.onclick = showMainMenu;
+    choicesEl.appendChild(runBtn);
+    
+    // Show current HP
+    gameScreenEl.innerHTML = `
+      ${player.name}: ${player.hp}/${player.maxHp} HP<br>
+      Wild ${wild.name}: ${wild.hp} HP
+    `;
+  }
+  
+  function useMove(moveIndex) {
+    let move = player.moves[moveIndex];
+    wild.hp -= move.damage;
+    if (wild.hp <= 0) {
+      gameScreenEl.innerHTML = `You defeated the wild ${wild.name}!`;
+      choicesEl.innerHTML = "";
+      const backBtn = document.createElement("button");
+      backBtn.textContent = "Back to Main Menu";
+      backBtn.onclick = showMainMenu;
+      choicesEl.appendChild(backBtn);
+      return;
+    }
+    
+    // Wild attacks back
+    let wildMove = wild.moves[Math.floor(Math.random() * wild.moves.length)];
+    player.hp -= wildMove.damage;
+    if (player.hp <= 0) {
+      gameScreenEl.innerHTML = `Oh no! ${player.name} fainted!`;
+      choicesEl.innerHTML = "";
+      const backBtn = document.createElement("button");
+      backBtn.textContent = "Back to Main Menu";
+      backBtn.onclick = showMainMenu;
+      choicesEl.appendChild(backBtn);
+      return;
+    }
+
+    // Show options again after both attacks
+    showBattleOptions();
+  }
+  
+  // Start showing battle options
+  showBattleOptions();
 }
 
 // Start the game
-showMainMenu();// Example: battle system
-function startBattle(wild) {
-  gameScreenEl.innerHTML = `A wild ${wild.name} appeared!<br>`;
-  
-  let player = gameState.playerPokemon[0];
-  
-  function showBattleOptions() {
-    choicesEl.innerHTML = "";
-    player.moves.forEach((move, index) => {
-      const btn = document.createElement("button");
-      btn.textContent = `${move.name} (${move.damage} dmg)`;
-      btn.onclick = () => useMove(index);
-      choicesEl.appendChild(btn);
-    });
-    const runBtn = document.createElement("button");
-    runBtn.textContent = "Run";
-    runBtn.onclick = showMainMenu;
-    choicesEl.appendChild(runBtn);
-    
-    // Show current HP
-    gameScreenEl.innerHTML = `
-      ${player.name}: ${player.hp}/${player.maxHp} HP<br>
-      Wild ${wild.name}: ${wild.hp} HP
-    `;
-  }
-  
-  function useMove(moveIndex) {
-    let move = player.moves[moveIndex];
-    wild.hp -= move.damage;
-    if (wild.hp <= 0) {
-      gameScreenEl.innerHTML = `You defeated the wild ${wild.name}!`;
-      choicesEl.innerHTML = "";
-      const backBtn = document.createElement("button");
-      backBtn.textContent = "Back to Main Menu";
-      backBtn.onclick = showMainMenu;
-      choicesEl.appendChild(backBtn);
-      return;
-    }
-    
-    // Wild attacks back
-    let wildMove = wild.moves[Math.floor(Math.random() * wild.moves.length)];
-    player.hp -= wildMove.damage;
-    if (player.hp <= 0) {
-      gameScreenEl.innerHTML = `Oh no! ${player.name} fainted!`;
-      choicesEl.innerHTML = "";
-      const backBtn = document.createElement("button");
-      backBtn.textContent = "Back to Main Menu";
-      backBtn.onclick = showMainMenu;
-      choicesEl.appendChild(backBtn);
-      return;
-    }
-    // Example: battle system
-function startBattle(wild) {
-  gameScreenEl.innerHTML = `A wild ${wild.name} appeared!<br>`;
-  
-  let player = gameState.playerPokemon[0];
-  
-  function showBattleOptions() {
-    choicesEl.innerHTML = "";
-    player.moves.forEach((move, index) => {
-      const btn = document.createElement("button");
-      btn.textContent = `${move.name} (${move.damage} dmg)`;
-      btn.onclick = () => useMove(index);
-      choicesEl.appendChild(btn);
-    });
-    const runBtn = document.createElement("button");
-    runBtn.textContent = "Run";
-    runBtn.onclick = showMainMenu;
-    choicesEl.appendChild(runBtn);
-    
-    // Show current HP
-    gameScreenEl.innerHTML = `
-      ${player.name}: ${player.hp}/${player.maxHp} HP<br>
-      Wild ${wild.name}: ${wild.hp} HP
-    `;
-  }
-  
-  function useMove(moveIndex) {
-    let move = player.moves[moveIndex];
-    wild.hp -= move.damage;
-    if (wild.hp <= 0) {
-      gameScreenEl.innerHTML = `You defeated the wild ${wild.name}!`;
-      choicesEl.innerHTML = "";
-      const backBtn = document.createElement("button");
-      backBtn.textContent = "Back to Main Menu";
-      backBtn.onclick = showMainMenu;
-      choicesEl.appendChild(backBtn);
-      return;
-    }
-    
-    // Wild attacks back
-    let wildMove = wild.moves[Math.floor(Math.random() * wild.moves.length)];
-    player.hp -= wildMove.damage;
-    if (player.hp <= 0) {
-      gameScreenEl.innerHTML = `Oh no! ${player.name} fainted!`;
-      choicesEl.innerHTML = "";
-      const backBtn = document.createElement("button");
-      backBtn.textContent = "Back to Main Menu";
-      backBtn.onclick = showMainMenu;
-      choicesEl.appendChild(backBtn);
-      return;
-    }
-    function showBattleOptions() {
-  choicesEl.innerHTML = "";
-  player.moves.forEach((move, index) => {
-    const btn = document.createElement("button");
-    btn.textContent = `${move.name} (${move.damage} dmg)`;
-    btn.onclick = () => useMove(index);
-    choicesEl.appendChild(btn);
-  });
-  const runBtn = document.createElement("button");
-  runBtn.textContent = "Run";
-  runBtn.onclick = showMainMenu;
-  choicesEl.appendChild(runBtn);
-
-  // Show current HP
-  gameScreenEl.innerHTML = `
-    ${player.name}: ${player.hp}/${player.maxHp} HP<br>
-    Wild ${wild.name}: ${wild.hp} HP
-  `;
-}
-
-  
-  showBattleOptions();
-}
+showMainMenu();
